@@ -8,6 +8,23 @@ local LrApplication = import 'LrApplication'
 local LrExportSession = import 'LrExportSession'
 local LrTasks = import 'LrTasks'
 
+function getOS()
+	-- ask LuaJIT first
+	if jit then
+		return jit.os
+	end
+
+	-- Unix, Linux variants
+	local fh,err = assert(io.popen("uname -o 2>/dev/null","r"))
+	if fh then
+		osname = fh:read()
+	end
+
+	return osname or "Windows"
+end
+
+local operatingSystem = getOS()
+
 -- Process pictures and save them as JPEG
 local function processPhotos(photos, outputFolder)
 	LrFunctionContext.callWithContext("export", function(exportContext)
@@ -109,6 +126,11 @@ local function customPicker()
 			value = "D:\\Pictures"
 		}
 
+		local operatingSystem = getOS()
+		local operatingSystemValue = f:static_text {
+			title = operatingSystem
+		}
+
 		local staticTextValue = f:static_text {
 			title = "Not started",
 		}
@@ -143,7 +165,11 @@ local function customPicker()
 						if LrTasks.canYield() then
 							LrTasks.yield()
 						end
-						LrTasks.execute("powershell Start-Sleep -Seconds 60")
+						if operatingSystem == "Windows" then
+							LrTasks.execute("powershell Start-Sleep -Seconds 60")
+						else
+							LrTasks.execute("sleep 60")
+						end
 					end
 				end)
 			end
@@ -160,6 +186,15 @@ local function customPicker()
 						title = "Watcher running: "
 					},
 					staticTextValue,
+				},
+				f:row {
+					fill_horizontal = 1,
+					f:static_text {
+						alignment = "right",
+						width = LrView.share "label_width",
+						title = "Operating system: "
+					},
+					operatingSystemValue,
 				},
 				f:row {
 					f:static_text {
