@@ -34,11 +34,11 @@ local function processPhotos(photos, outputFolder)
 				LR_outputSharpeningOn = false,
 				LR_reimportExportedPhoto = false,
 				LR_renamingTokensOn = true,
-				LR_size_doConstrain = true,
+				-- LR_size_doConstrain = true,
 				LR_size_doNotEnlarge = true,
-				LR_size_maxHeight = 2000,
-				LR_size_maxWidth = 2000,
-				LR_size_resolution = 72,
+				-- LR_size_maxHeight = 2000,
+				-- LR_size_maxWidth = 2000,
+				-- LR_size_resolution = 72,
 				LR_size_units = "pixels",
 				LR_tokens = "{{image_name}}",
 				LR_useWatermark = false,
@@ -216,7 +216,7 @@ local function customPicker()
 			}
 
 			LrDialogs.presentModalDialog {
-				title = "Auto Export resize2000px Watcher",
+				title = "Auto Export fullsize Watcher",
 				contents = c,
 				-- Preferrably cancel should stop the script 
 				-- OK can be changed to run in background

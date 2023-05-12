@@ -5,12 +5,15 @@ return {
 
 	LrToolkitIdentifier = 'nl.olafhaalstra.lightroom.autoimportexport',
 
-	LrPluginName = LOC "$$$/AutoImportExport/PluginName=Auto Import & Export",
+	LrPluginName = LOC "$$$/AutoImportExport/PluginName=Auto Import & Export ",
 
-	LrExportMenuItems = {
-		title = "Auto Import & Export",
+	LrExportMenuItems = {{
+		title = "Auto Import & Export resize 2000px",
 		file = "ExportMenuItem.lua",		
-	},
+	},{
+		title = "Auto Import & Export fullsize",
+		file = "ExportMenuItemFullsize.lua",		
+	},},
 	VERSION = { major=1, minor=0, revision=0, build="20220724", },
 
 }
