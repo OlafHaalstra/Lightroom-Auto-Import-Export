@@ -8,23 +8,6 @@ local LrApplication = import 'LrApplication'
 local LrExportSession = import 'LrExportSession'
 local LrTasks = import 'LrTasks'
 
-function getOS()
-	-- ask LuaJIT first
-	if jit then
-		return jit.os
-	end
-
-	-- Unix, Linux variants
-	local fh,err = assert(io.popen("uname -o 2>/dev/null","r"))
-	if fh then
-		osname = fh:read()
-	end
-
-	return osname or "Windows"
-end
-
-local operatingSystem = getOS()
-
 -- Process pictures and save them as JPEG
 local function processPhotos(photos, outputFolder)
 	LrFunctionContext.callWithContext("export", function(exportContext)
@@ -51,11 +34,11 @@ local function processPhotos(photos, outputFolder)
 				LR_outputSharpeningOn = false,
 				LR_reimportExportedPhoto = false,
 				LR_renamingTokensOn = true,
-				LR_size_doConstrain = true,
+				-- LR_size_doConstrain = true,
 				LR_size_doNotEnlarge = true,
-				LR_size_maxHeight = 2000,
-				LR_size_maxWidth = 2000,
-				LR_size_resolution = 72,
+				-- LR_size_maxHeight = 2000,
+				-- LR_size_maxWidth = 2000,
+				-- LR_size_resolution = 72,
 				LR_size_units = "pixels",
 				LR_tokens = "{{image_name}}",
 				LR_useWatermark = false,
@@ -127,11 +110,6 @@ local function customPicker()
 			value = "D:\\Pictures"
 		}
 
-		local operatingSystem = getOS()
-		local operatingSystemValue = f:static_text {
-			title = operatingSystem
-		}
-
 		local staticTextValue = f:static_text {
 			title = "Not started",
 		}
@@ -166,11 +144,7 @@ local function customPicker()
 						if LrTasks.canYield() then
 							LrTasks.yield()
 						end
-						if operatingSystem == "Windows" then
-							LrTasks.execute("powershell Start-Sleep -Seconds 3")
-						else
-							LrTasks.execute("sleep 60")
-						end
+						LrTasks.execute("powershell Start-Sleep -Seconds 3")
 					end
 				end)
 			end
@@ -187,15 +161,6 @@ local function customPicker()
 						title = "Watcher running: "
 					},
 					staticTextValue,
-				},
-				f:row {
-					fill_horizontal = 1,
-					f:static_text {
-						alignment = "right",
-						width = LrView.share "label_width",
-						title = "Operating system: "
-					},
-					operatingSystemValue,
 				},
 				f:row {
 					f:static_text {
@@ -251,7 +216,7 @@ local function customPicker()
 			}
 
 			LrDialogs.presentModalDialog {
-				title = "Auto Export resize2000px Watcher",
+				title = "Auto Export fullsize Watcher",
 				contents = c,
 				-- Preferrably cancel should stop the script 
 				-- OK can be changed to run in background
