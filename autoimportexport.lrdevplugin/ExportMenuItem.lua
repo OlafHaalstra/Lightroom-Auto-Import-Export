@@ -173,6 +173,10 @@ local function customPicker()
 				folderIndex[folder:getName()] = i
 			end
 
+			folderField = f:combo_box {
+				items = folderCombo
+			}
+
 			local watcherRunning = false
 
 			-- Watcher, executes function and then sleeps 60 seconds using PowerShell
@@ -210,12 +214,9 @@ local function customPicker()
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Source Lightroom Folder: "
+						title = "Select Lightroom Folder: "
 					},
-					f:combo_box {
-						items = folderCombo,
-						immediate = false
-					}
+					folderField
 				},
 				f:row {
 					f:static_text {
@@ -254,8 +255,13 @@ local function customPicker()
 				f:row {
 					f:push_button {
 						title = "Process once",
-
 						action = function()
+							outputToLog("-------")
+							outputToLog(folderField.value)
+							outputToLog("========")
+							outputToLog(folderField)
+							outputToLog("========")							
+
 							if folderField.value ~= "" then
 								props.myObservedString = "Processed once"
 								importFolder(LrCatalog, catalogFolders[folderIndex[folderField.value]], outputFolderField.value)
