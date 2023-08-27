@@ -57,10 +57,6 @@ local function processPhotos(photos, outputFolder, size)
 			functionContext = exportContext
 		})
 
-		-- outputToLog("******")
-		-- outputToLog(size)
-		-- outputToLog("******")
-
 		if size == "2000px" then
 			exportSession = LrExportSession({
 				photosToExport = photos,
@@ -216,10 +212,16 @@ local function customPicker()
 				value = "2000px"
 			}
 
+			local intervalField = f:combo_box {
+				items = {"3", "15", "30", "60"},
+				value = "3",
+				width_in_digits = 3
+			}
+
 			local watcherRunning = false
 
-			-- Watcher, executes function and then sleeps 60 seconds using PowerShell
-			local function watch()
+			-- Watcher, executes function and then sleeps x seconds using PowerShell
+			local function watch(interval)
 				LrTasks.startAsyncTask(function()
 					while watcherRunning do
 						LrDialogs.showBezel("Processing images.")
@@ -228,9 +230,9 @@ local function customPicker()
 							LrTasks.yield()
 						end
 						if operatingSystem == "Windows" then
-							LrTasks.execute("powershell Start-Sleep -Seconds 60")
+							LrTasks.execute("powershell Start-Sleep -Seconds " .. interval)
 						else
-							LrTasks.execute("sleep 60")
+							LrTasks.execute("sleep " .. interval)
 						end
 					end
 				end)
@@ -261,17 +263,25 @@ local function customPicker()
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Output Folder: "
+						title = "Size: "
 					},
-					outputFolderField
+					sizeField
 				},
 				f:row {
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Size: "
+						title = "Interval (second): ",
 					},
-					sizeField
+					intervalField
+				},
+				f:row {
+					f:static_text {
+						alignment = "right",
+						width = LrView.share "label_width",
+						title = "Output Folder: "
+					},
+					outputFolderField
 				},
 				f:row {
 					f:separator {
@@ -300,13 +310,13 @@ local function customPicker()
 						end
 					},
 					f:push_button {
-						title = "Watch every 60s",
+						title = "Watch interval",
 
 						action = function()
 							watcherRunning = true
 							if folderField.value ~= "" then
 								props.myObservedString = "Running"
-								watch()
+								watch(intervalField.value)
 							else
 								LrDialogs.message("Please select an input folder")
 							end
