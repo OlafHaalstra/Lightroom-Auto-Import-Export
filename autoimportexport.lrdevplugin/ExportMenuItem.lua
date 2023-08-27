@@ -173,7 +173,7 @@ local function customPicker()
 				folderIndex[folder:getName()] = i
 			end
 
-			folderField = f:combo_box {
+			local folderField = f:combo_box {
 				items = folderCombo
 			}
 
@@ -255,13 +255,7 @@ local function customPicker()
 				f:row {
 					f:push_button {
 						title = "Process once",
-						action = function()
-							outputToLog("-------")
-							outputToLog(folderField.value)
-							outputToLog("========")
-							outputToLog(folderField)
-							outputToLog("========")							
-
+						action = function()					
 							if folderField.value ~= "" then
 								props.myObservedString = "Processed once"
 								importFolder(LrCatalog, catalogFolders[folderIndex[folderField.value]], outputFolderField.value)
