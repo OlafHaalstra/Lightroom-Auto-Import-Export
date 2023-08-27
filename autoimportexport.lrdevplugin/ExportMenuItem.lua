@@ -8,6 +8,23 @@ local LrApplication = import 'LrApplication'
 local LrExportSession = import 'LrExportSession'
 local LrTasks = import 'LrTasks'
 
+local LrLogger = import 'LrLogger'
+local myLogger = LrLogger( 'exportLogger' )
+myLogger:enable( "print" )
+
+local function outputToLog( message )
+	myLogger:trace( message )
+end
+
+local function getHome()
+	local fh,err = assert(io.popen("echo $HOME 2>/dev/null","r"))
+	if fh then
+		home = fh:read()
+	end
+
+	return home or ""
+end 
+
 function getOS()
 	-- ask LuaJIT first
 	if jit then
@@ -20,6 +37,10 @@ function getOS()
 		osname = fh:read()
 	end
 
+	if osname == "Darwin" then 
+		return "MacOS"
+	end
+	
 	return osname or "Windows"
 end
 
@@ -122,14 +143,15 @@ local function customPicker()
 		local props = LrBinding.makePropertyTable(context)
 		local f = LrView.osFactory()
 
-		local outputFolderField = f:edit_field {
-			immediate = true,
-			value = "D:\\Pictures"
-		}
-
 		local operatingSystem = getOS()
 		local operatingSystemValue = f:static_text {
 			title = operatingSystem
+		}
+
+		local outputFolderField = f:edit_field {
+			immediate = true,
+			width = 500,
+			value = ( operatingSystem == "Windows" ) and "C:\\Pictures" or getHome() .. "/Pictures" 
 		}
 
 		local staticTextValue = f:static_text {
@@ -151,10 +173,6 @@ local function customPicker()
 				folderIndex[folder:getName()] = i
 			end
 
-			local folderField = f:combo_box {
-				items = folderCombo
-			}
-
 			local watcherRunning = false
 
 			-- Watcher, executes function and then sleeps 60 seconds using PowerShell
@@ -167,7 +185,7 @@ local function customPicker()
 							LrTasks.yield()
 						end
 						if operatingSystem == "Windows" then
-							LrTasks.execute("powershell Start-Sleep -Seconds 3")
+							LrTasks.execute("powershell Start-Sleep -Seconds 60")
 						else
 							LrTasks.execute("sleep 60")
 						end
@@ -184,15 +202,6 @@ local function customPicker()
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Watcher running: "
-					},
-					staticTextValue,
-				},
-				f:row {
-					fill_horizontal = 1,
-					f:static_text {
-						alignment = "right",
-						width = LrView.share "label_width",
 						title = "Operating system: "
 					},
 					operatingSystemValue,
@@ -201,17 +210,46 @@ local function customPicker()
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Select folder: "
+						title = "Source Lightroom Folder: "
 					},
-					folderField
+					f:combo_box {
+						items = folderCombo,
+						immediate = false
+					}
 				},
 				f:row {
 					f:static_text {
 						alignment = "right",
 						width = LrView.share "label_width",
-						title = "Output folder: "
+						title = "Output Folder: "
 					},
 					outputFolderField
+				},
+				f:row {
+					f:static_text {
+						alignment = "right",
+						width = LrView.share "label_width",
+						title = "Resize?: "
+					},
+					f:combo_box {
+						items = {"2000px", "full size"},
+						immediate = false,
+						value = "2000px"
+					}
+				},
+				f:row {
+					f:separator {
+						fill_horizontal = 1
+					}
+				},
+				f:row {
+					fill_horizontal = 1,
+					f:static_text {
+						alignment = "right",
+						width = LrView.share "label_width",
+						title = "Watcher running: "
+					},
+					staticTextValue,
 				},
 				f:row {
 					f:push_button {
@@ -227,7 +265,7 @@ local function customPicker()
 						end
 					},
 					f:push_button {
-						title = "Watch every 3s",
+						title = "Watch every 60s",
 
 						action = function()
 							watcherRunning = true

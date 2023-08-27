@@ -3,9 +3,9 @@ return {
 	LrSdkVersion = 3.0,
 	LrSdkMinimumVersion = 1.3, -- minimum SDK version required by this plug-in
 
-	LrToolkitIdentifier = 'nl.olafhaalstra.lightroom.autoimportexport',
+	LrToolkitIdentifier = 'org.365labs.app.pixid.autoimportexport',
 
-	LrPluginName = LOC "$$$/AutoImportExport/PluginName=Auto Import & Export ",
+	LrPluginName = LOC "$$$/AutoImportExport/PluginName=Pixid Auto Import & Export ",
 
 	LrExportMenuItems = {{
 		title = "Auto Import & Export resize 2000px",
