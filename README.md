@@ -24,7 +24,7 @@ Easily edit flagged photos with a set of presets, convenient for events where yo
 
 4. Specify which folder you want to apply the script to, and specify the output folder (full path).
 
-5. Now you have two options (A) apply the process just once by pressing `Process once` or (B) start a watcher that will run the script every 60 seconds (_currently works on Windows only_).
+5. Now you have two options (A) apply the process just once by pressing `Process once` or (B) start a watcher that will run the script every 60 seconds.
 
 6. This will process all pictures by:
 
