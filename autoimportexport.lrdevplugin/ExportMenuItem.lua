@@ -270,6 +270,19 @@ local function customPicker()
 					},
 				},
 				f:row {
+					f:static_text {
+						alignment = "right",
+						width = LrView.share "label_width",
+						title = "Lightroom folder: "
+					},
+					props.folderField
+				},
+				f:row {
+					f:static_text {
+						title = "Please press 'Tab' after selecting the Lightroom folder"
+					},
+				},
+				f:row {
 					fill_horizontal = 1,
 					f:static_text {
 						alignment = "right",
@@ -308,19 +321,6 @@ local function customPicker()
 					f:static_text {
 						width_in_chars = numCharacters,
 						title = LrView.bind("presetSelected")
-					},
-				},
-				f:row {
-					f:static_text {
-						alignment = "right",
-						width = LrView.share "label_width",
-						title = "Lightroom folder: "
-					},
-					props.folderField
-				},
-				f:row {
-					f:static_text {
-						title = "Please press 'Tab' after selecting the Lightroom folder"
 					},
 				},
 				f:row {
